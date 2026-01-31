@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnvConfig } from './env.schema';
+import type { JwtSignOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class AppConfigService {
@@ -18,8 +19,8 @@ export class AppConfigService {
     return this.envConfig.JWT_SECRET;
   }
 
-  get jwtExpiration(): string {
-    return this.envConfig.JWT_EXPIRES_IN;
+  get jwtExpiration(): JwtSignOptions['expiresIn'] {
+    return this.envConfig.JWT_EXPIRES_IN as JwtSignOptions['expiresIn'];
   }
 
   get frontendUrl(): string {

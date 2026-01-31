@@ -18,7 +18,7 @@ export default class AuthRepository {
 
     if (!user) throw new Error('Email ou senha invalidos');
 
-    const passwordVO = new Password({ value: user });
+    const passwordVO = new Password({ value: password });
     const matchPass = await passwordVO.matches(user.password);
 
     if (!matchPass) throw new Error('Email ou senha invalidos');
