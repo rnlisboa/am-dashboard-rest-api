@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthLoginDto } from 'src/auth/domain/dto/auth-login.dto';
 import AuthRepository from 'src/auth/repositories/auth.repository';
@@ -28,7 +28,7 @@ export default class AuthService {
 
       return { accessToken };
     } catch (error) {
-      throw new Error('Erro ao criar token');
+      throw new BadRequestException('Erro ao criar token');
     }
   }
 
@@ -43,6 +43,7 @@ export default class AuthService {
 
   async login(auth: AuthLoginDto) {
     const user = await this.repository.login(auth);
-    return this.createToken(user);
+    const token = await this.createToken(user);
+    return { user, token };
   }
 }

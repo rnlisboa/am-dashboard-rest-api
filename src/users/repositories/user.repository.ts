@@ -24,6 +24,10 @@ export default class UserRepository {
   }
 
   async findByEmail(email: string) {
+    if (!email) {
+      throw new Error('Email é obrigatório.');
+    }
+
     const user = await this.prismaCliente.user.findUnique({
       where: { email },
     });

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import UserRepository from 'src/users/repositories/user.repository';
 import { AuthLoginDto } from '../domain/dto/auth-login.dto';
@@ -15,13 +15,12 @@ export default class AuthRepository {
     const user = await this.prismaCliente.user.findUnique({
       where: { email },
     });
-
-    if (!user) throw new Error('Email ou senha invalidos');
+    if (!user) throw new BadRequestException('Emails ou senha invalidos');
 
     const passwordVO = new Password({ value: password });
     const matchPass = await passwordVO.matches(user.password);
 
-    if (!matchPass) throw new Error('Email ou senha invalidos');
+    if (!matchPass) throw new BadRequestException('Email ou senhas invalidos');
 
     return user;
   }
