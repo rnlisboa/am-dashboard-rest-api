@@ -19,17 +19,26 @@ export class AuthController {
     @Body() authLoginDto: AuthLoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { user, token } = await this.authService.login(authLoginDto);
-    res.cookie('access_token', token, {
+    const { user, accessToken, refreshToken } =
+      await this.authService.login(authLoginDto);
+    res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
       maxAge: 1000 * 60 * 60,
     });
 
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
     return {
       message: 'Login realizado com sucesso',
-      accessToken: token,
+      accessToken,
+      refreshToken,
       user: {
         id: user.id,
         email: user.email,

@@ -19,8 +19,16 @@ export class AppConfigService {
     return this.envConfig.JWT_SECRET;
   }
 
+  get jwtRefreshSecret(): string {
+    return this.envConfig.JWT_REFRESH_SECRET;
+  }
+
   get jwtExpiration(): JwtSignOptions['expiresIn'] {
     return this.envConfig.JWT_EXPIRES_IN as JwtSignOptions['expiresIn'];
+  }
+
+  get jwtRefreshExpiration(): JwtSignOptions['expiresIn'] {
+    return this.envConfig.JWT_REFRESH_EXPIRES_IN as JwtSignOptions['expiresIn'];
   }
 
   get frontendUrl(): string {

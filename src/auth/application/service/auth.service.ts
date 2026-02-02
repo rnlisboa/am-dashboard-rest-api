@@ -13,7 +13,7 @@ export default class AuthService {
     private readonly configService: AppConfigService,
   ) {}
 
-  async createToken(user: UserEntity) {
+  async createAccessToken(user: UserEntity) {
     try {
       const secret = this.configService.jwtSecret;
       const expiration = this.configService.jwtExpiration;
@@ -26,9 +26,28 @@ export default class AuthService {
         },
       );
 
-      return { accessToken };
+      return accessToken;
     } catch (error) {
       throw new BadRequestException('Erro ao criar token');
+    }
+  }
+
+  async createRefreshToken(user: UserEntity) {
+    try {
+      const secret = this.configService.jwtRefreshSecret;
+      const expiration = this.configService.jwtRefreshExpiration;
+      const refreshToken = this.jwtService.sign(
+        { name: user.name, email: user.email },
+        {
+          secret,
+          expiresIn: expiration,
+          subject: user.id as string,
+        },
+      );
+
+      return refreshToken ;
+    } catch (error) {
+      throw new BadRequestException('Erro ao criar refresh token');
     }
   }
 
@@ -43,7 +62,8 @@ export default class AuthService {
 
   async login(auth: AuthLoginDto) {
     const user = await this.repository.login(auth);
-    const token = await this.createToken(user);
-    return { user, token };
+    const accessToken = await this.createAccessToken(user);
+    const refreshToken = await this.createRefreshToken(user);
+    return { user, accessToken, refreshToken };
   }
 }

@@ -13,6 +13,10 @@ datasource db {
   provider = "postgresql"
 }
 
+//Plataforma de Cursos
+//Alunos, cursos, aulas assistidas, certificados
+//Filtros: Data, curso, categoria, status de conclusão
+
 model User{
   id String @id @default(cuid())
   name         String
@@ -20,4 +24,45 @@ model User{
   password  String
   createdAt DateTime @default(now()) 
   updatedAt DateTime @updatedAt
+  cursos    Curso[]
+}
+
+model Categoria {
+  id     String  @id @default(cuid())
+  nome   String  @unique
+  cursos Curso[]
+}
+
+model Aluno {
+  id         String       @id @default(cuid())
+  name       String
+  email      String       @unique
+  inscricoes CursoAluno[]
+}
+
+model Curso {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  
+  categoriaId String
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  
+  professorId String
+  professor   User      @relation(fields: [professorId], references: [id])
+  
+  totalAulasCurso    Int      @default(10)
+  inscritos   CursoAluno[]
+}
+
+model CursoAluno {
+  id                 String   @id @default(cuid())
+  alunoId            String
+  cursoId            String
+  aluno              Aluno    @relation(fields: [alunoId], references: [id])
+  curso              Curso    @relation(fields: [cursoId], references: [id])
+  
+  dataInscricao      DateTime @default(now())
+  qtdAulasAssistidas Int      @default(0)
+  concluido          Boolean  @default(false)
 }

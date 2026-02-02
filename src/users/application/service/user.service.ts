@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import Password from 'src/shared/domain/value-objects/password';
 import { CreateUserDto } from 'src/users/domain/dto/create-user.dto';
 import { UpdateUserDto } from 'src/users/domain/dto/update-user.dto';
@@ -28,7 +32,12 @@ export default class UserService {
   }
 
   async findOne(id: string): Promise<UserEntity | null> {
+    if (!id) {
+      throw new BadRequestException('Id não enviado');
+    }
+
     const user = await this.userRepository.findOne(id);
+
     if (!user) {
       throw new NotFoundException('No user with this id.');
     }
